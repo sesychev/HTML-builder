@@ -1,26 +1,28 @@
+//stdin.pipe(writable);// запись с клавиатуры в поток напрямую
 const fs = require("fs");
 const path = require("path");
 const process = require("process");
 
-const readPath = path.join(__dirname, "/text.txt");
 const wtitePath = path.join(__dirname, "/temp.txt");
-
-let readable = fs.createReadStream(readPath, {
-  encoding: "utf-8",
-});
-
-readable.pipe(process.stdout); //вывод текста в консоль
 
 let writable = fs.createWriteStream(wtitePath, {
   encoding: "utf-8",
 });
 
-readable.pipe(writable); // запись в файл из потока
+process.stdout.write(
+  "Please, write here something except the word 'exit:" + "\n"
+);
 
-/*
-readable.on("data", (data) => {
-  console.log(data);
-  //writable.write(data);
+process.stdin.on("data", function (data, key) {
+  if (data.toString().trim() === "exit") {
+    process.stdout.write("Bye, when the word 'exit' is typed ..." + "\n");
+    process.exit();
+  }
+
+  writable.write(data);
 });
-*/
-//https://www.geeksforgeeks.org/difference-between-process-stdout-write-and-console-log-in-node-js/
+
+process.on("SIGINT", function () {
+  console.log("Bye, when Ctrl+Break is pressed ...");
+  process.exit();
+});
