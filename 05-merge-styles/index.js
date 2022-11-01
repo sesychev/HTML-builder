@@ -12,7 +12,7 @@ fs.readdir(styles, { withFileTypes: true }, (e, files) => {
   files.forEach((file) => {
     if (e) console.error(e);
     else {
-      if (path.extname(file.name) === ".css") {
+      if (file.isFile() && path.extname(file.name) === ".css") {
         fs.createReadStream(path.join(styles, file.name), {
           encoding: "utf-8",
         }).pipe(writable); // запись в файл из потока/файла
