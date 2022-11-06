@@ -102,12 +102,20 @@ async function myHTML() {
             files.forEach((file) => {
               if (file.isFile() && path.extname(file.name) === ".html") {
                 let fname = file.name.substring(0, file.name.indexOf("."));
-                fs.promises
-                  .readFile(path.join(components, file.name), "utf-8", () => {})
-                  .then((data) => {
-                    buffer = buffer.replace(`{{${fname}}}`, data);
-                    fs.promises.writeFile(index, buffer);
-                  });
+                (async () => {
+                  await fs.promises
+                    .readFile(
+                      path.join(components, file.name),
+                      "utf-8",
+                      (error) => {
+                        if (error) console.error(error);
+                      }
+                    )
+                    .then((data) => {
+                      buffer = buffer.replace(`{{${fname}}}`, data);
+                      fs.promises.writeFile(index, buffer);
+                    });
+                })();
               }
             }) //then forEach
         ); //then
